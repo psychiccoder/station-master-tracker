@@ -3,82 +3,170 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Station Master 90/100 Tracker</title>
+<meta name="theme-color" content="#0f766e">
+<title>Station Master Tracker</title>
 <style>
-:root{--bg:#f7f4f2;--card:#fff;--tx:#1f1f1f;--mut:#6b6b6b;--ac:#0f6b57;--bd:#e5e1dc;--hi:#b4531a;--track:#e5e2dd}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45;padding:16px;max-width:640px;margin:0 auto}
-h1{font-size:1.5rem;margin:8px 0 4px}
-h2{font-size:1.05rem;margin:0 0 8px}
-.sub{color:var(--mut);margin:0 0 14px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin:14px 0}
-.mut{color:var(--mut);font-size:.9rem}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.big{font-size:2rem;font-weight:700;color:var(--ac)}
-.bar{height:10px;background:var(--track);border-radius:99px;overflow:hidden;margin-top:8px}
-.bar>div{height:100%;background:var(--ac);width:0;transition:width .3s}
-.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--bd)}
-.item:first-of-type{border-top:0}
+:root{--bg:#f3f5f7;--card:#ffffff;--ink:#111827;--mut:#6b7280;--ac:#0f766e;--ac2:#14b8a6;--bd:#e5e7eb;--track:#e5e7eb;--hi:#c2410c;--warn:#b91c1c;--ok:#047857;--field:#f8fafc;--shadow:0 1px 2px rgba(16,24,40,.06),0 6px 18px rgba(16,24,40,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b1220;--card:#111a2e;--ink:#e5e7eb;--mut:#94a3b8;--ac:#2dd4bf;--ac2:#14b8a6;--bd:#1f2a44;--track:#1f2a44;--hi:#fb923c;--warn:#f87171;--ok:#34d399;--field:#0b1220;--shadow:none}}
+:root[data-theme=dark]{--bg:#0b1220;--card:#111a2e;--ink:#e5e7eb;--mut:#94a3b8;--ac:#2dd4bf;--ac2:#14b8a6;--bd:#1f2a44;--track:#1f2a44;--hi:#fb923c;--warn:#f87171;--ok:#34d399;--field:#0b1220;--shadow:none}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45;padding:16px 14px 40px;max-width:680px;margin:0 auto}
+h1{font-size:1.45rem;margin:0;letter-spacing:-.01em}
+h2{font-size:1.02rem;margin:0 0 10px}
+[hidden]{display:none!important}
+.sub{color:var(--mut);margin:2px 0 0;font-size:.9rem}
+.mut{color:var(--mut);font-size:.88rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.actions{display:flex;gap:8px;align-items:center}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.big{font-size:1.9rem;font-weight:800;color:var(--ac);line-height:1.1}
+.mid{font-size:1.3rem;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.chip{background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:3px 10px;font-size:.78rem;color:var(--mut)}
+.hero{display:flex;gap:16px;align-items:center}
+.ring{--p:0;width:92px;height:92px;flex:none;border-radius:50%;background:conic-gradient(var(--ac) calc(var(--p)*1%),var(--track) 0);display:grid;place-items:center;position:relative}
+.ring::before{content:"";position:absolute;inset:9px;background:var(--card);border-radius:50%}
+.ring span{position:relative;font-weight:800;font-size:1.15rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.stat .v{font-size:1.25rem;font-weight:800;color:var(--ac)}
+.bar{height:8px;background:var(--track);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));width:0;transition:width .35s}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--bd)}
+.tname{flex:1;min-width:0}
+.tag{font-size:.68rem;font-weight:700;margin-left:6px;padding:1px 7px;border-radius:99px;border:1px solid var(--bd);color:var(--mut);vertical-align:middle}
+.tag.HIGH{color:var(--hi);border-color:var(--hi)}
+.boxes{display:flex;gap:12px;flex:none}
+.boxes label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.74rem;color:var(--mut);font-weight:600}
 input[type=checkbox]{width:24px;height:24px;margin:0;accent-color:var(--ac);flex:none}
-.boxes{display:flex;gap:14px;flex:none}
-.boxes label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.8rem;color:var(--mut)}
-.tag{font-size:.72rem;font-weight:600;margin-left:6px;color:var(--mut)}
-.tag.HIGH{color:var(--hi)}
+details.sec{padding:0}
+details.sec>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 16px 4px;font-weight:700}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"▾";color:var(--mut);margin-left:8px;transition:transform .2s}
+details.sec[open]>summary::after{transform:rotate(180deg)}
+details.sec>.bar{margin:6px 16px 8px}
+details.sec>.item{padding-left:16px;padding-right:16px}
+.pill{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--ac)}
 table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:8px 6px;border-top:1px solid var(--bd)}
-th{border-top:0}
+td,th{text-align:left;padding:9px 4px;border-top:1px solid var(--bd)}
+th{border-top:0;color:var(--mut);font-weight:600;font-size:.85rem}
 td:nth-child(n+2),th:nth-child(n+2){text-align:right}
 ul{padding-left:20px;margin:8px 0}
 li{margin:8px 0}
-input[type=text],input[type=email],input[type=password],input[type=number],select{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--bd);background:#faf9f7;width:100%;margin:5px 0}
-button{font:inherit;padding:12px 18px;border-radius:10px;border:0;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
-button.ghost{background:transparent;color:var(--mut);border:1px solid var(--bd);padding:8px 14px}
-.row{display:flex;gap:8px}
+input[type=text],input[type=email],input[type=password],input[type=number],select{font:inherit;color:var(--ink);padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--field);width:100%;margin:5px 0}
+button{font:inherit;padding:12px 18px;border-radius:12px;border:0;background:var(--ac);color:#04201c;font-weight:700;cursor:pointer}
+:root:not([data-theme=dark]) button:not(.ghost):not(.icon):not(.x):not(.link){color:#fff}
+button.ghost{background:transparent;color:var(--mut);border:1px solid var(--bd);padding:8px 14px;font-weight:600}
+button.icon{background:var(--card);border:1px solid var(--bd);padding:7px 11px;color:var(--ink)}
+button.link{background:none;color:var(--ac);padding:6px 0;font-weight:600}
+button.q{background:var(--field);color:var(--ink);border:1px solid var(--bd);padding:10px 4px;font-weight:700}
+.row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1}
-.err{color:#b91c1c;font-size:.9rem;min-height:1.3em}
-.mock{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--bd)}
-.x{background:none;color:#b91c1c;padding:4px 10px}
-.foot{color:var(--mut);font-size:.85rem;margin:18px 0 30px}
+.row>button{flex:none}
+.qrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.msg{font-size:.9rem;min-height:1.3em;margin-top:6px}
+.msg.err{color:var(--warn)}.msg.ok{color:var(--ok)}
+.week{display:flex;gap:8px;margin-top:12px}
+.col{flex:1;text-align:center}
+.wt{height:56px;display:flex;align-items:flex-end;background:var(--track);border-radius:9px;overflow:hidden}
+.wbar{width:100%;background:var(--ac2);border-radius:9px 9px 0 0;opacity:.45}
+.wbar.on{opacity:1}
+.wl{font-size:.72rem;color:var(--mut);margin-top:4px}
+.wl.today{color:var(--ac);font-weight:800}
+.mock{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
+.x{background:none;color:var(--warn);padding:4px 10px}
+.foot{color:var(--mut);font-size:.82rem;margin:18px 2px 30px}
+.auth-wrap{padding-top:28px}
+.logo{font-size:2.2rem}
 </style>
 </head>
 <body>
 
-<div id="auth">
-  <h1>Station Master: 90/100 Tracker</h1>
+<div id="auth" class="auth-wrap">
+  <div class="logo">🚉</div>
+  <h1>Station Master Tracker</h1>
   <p class="sub">Log in to see your own tracker. New here? Tap Sign up.</p>
   <div class="card">
     <input id="email" type="email" placeholder="Email" autocomplete="email">
     <input id="pass" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
+    <label class="mut" style="display:flex;gap:8px;align-items:center;margin:2px 0 8px"><input id="showpw" type="checkbox" style="width:18px;height:18px"> Show password</label>
     <div class="row">
       <button id="login">Log in</button>
       <button id="signup" class="ghost">Sign up</button>
     </div>
-    <div class="err" id="autherr"></div>
+    <button id="forgot" class="link">Forgot password?</button>
+    <div class="msg" id="authmsg"></div>
+  </div>
+</div>
+
+<div id="recovery" hidden class="auth-wrap">
+  <div class="logo">🔑</div>
+  <h1>Set a new password</h1>
+  <div class="card">
+    <input id="np1" type="password" placeholder="New password (min 6 characters)" autocomplete="new-password">
+    <input id="np2" type="password" placeholder="Repeat new password" autocomplete="new-password">
+    <button id="savepw" style="width:100%;margin-top:6px">Save new password</button>
+    <div class="msg" id="recmsg"></div>
   </div>
 </div>
 
 <div id="app" hidden>
-  <div class="top">
-    <h1>Station Master: 90/100 Tracker</h1>
-  </div>
-  <p class="sub">RRB CEN 08/2026 · 100 questions · 120 min · 1/3 negative marking</p>
-  <div class="top mut"><span id="who"></span><button id="logout" class="ghost">Log out</button></div>
-
-  <div class="card">
-    <div class="top">
-      <div><div class="mut">Application closes in</div><div class="big" id="days">-</div></div>
-      <div style="text-align:right"><div class="mut">Syllabus done</div><div class="big" id="pct">0%</div></div>
+  <div class="head">
+    <div>
+      <h1>Station Master</h1>
+      <p class="sub">90/100 Tracker · RRB CEN 08/2026</p>
     </div>
-    <div class="bar"><div id="fill"></div></div>
-    <div class="mut" id="saved" style="margin-top:8px">Loading your data...</div>
+    <div class="actions">
+      <button id="theme" class="icon" title="Light / dark">🌓</button>
+      <button id="logout" class="ghost">Log out</button>
+    </div>
   </div>
+  <div class="chips">
+    <span class="chip">100 questions</span><span class="chip">120 min</span><span class="chip">1/3 negative marking</span>
+  </div>
+  <div class="mut" id="who" style="margin:6px 2px"></div>
 
-  <div class="card">
+  <section class="card hero">
+    <div class="ring" id="ring"><span id="pct">0%</span></div>
+    <div class="stats">
+      <div class="stat"><div class="mut">Syllabus done</div><div class="v" id="pct2">0%</div></div>
+      <div class="stat"><div class="mut">Application closes in</div><div class="v" id="days">-</div></div>
+      <div class="stat" style="grid-column:1/3"><div class="mut" id="saved">Loading your data...</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="top">
+      <div><div class="mut">Study streak</div><div class="big"><span id="scur">0</span> 🔥</div></div>
+      <div style="text-align:right"><div class="mut">Best</div><div class="mid" id="sbest">0</div></div>
+    </div>
+    <div class="week" id="week"></div>
+    <div class="mut" id="smsg" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card">
+    <div class="top"><h2 style="margin:0">Today's goal</h2><span class="mut">questions solved</span></div>
+    <div style="margin-top:8px"><span class="big" id="qnow">0</span> <span class="mut">/ <span id="qgoal">100</span></span></div>
+    <div class="bar"><div id="gfill"></div></div>
+    <div class="mut" id="gmsg" style="margin-top:8px"></div>
+    <div class="qrow">
+      <button class="q" data-add="10">+10</button>
+      <button class="q" data-add="25">+25</button>
+      <button class="q" data-add="50">+50</button>
+      <button class="q" data-add="-10">−10</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="mut" style="flex:none">Daily goal</span>
+      <input id="goalin" type="number" inputmode="numeric" min="1" style="margin:0">
+    </div>
+  </section>
+
+  <section class="card">
     <h2>Do first (before 25 Nov)</h2>
     <div id="dofirst"></div>
-  </div>
+  </section>
 
-  <div class="card">
+  <section class="card">
     <h2>Marks plan for 90</h2>
     <table>
       <tr><th>Section</th><th>Marks</th><th>Target</th></tr>
@@ -89,16 +177,16 @@ button.ghost{background:transparent;color:var(--mut);border:1px solid var(--bd);
       <tr><td><b>Total</b></td><td><b>100</b></td><td><b>90</b></td></tr>
     </table>
     <p class="mut">Net score = right − wrong/3. Example: 93 right + 6 wrong ≈ 91. Guess only when you can remove two options. Last cycle's UR cut-offs were roughly 71–82 on a different pattern, so 90 is a stretch target; 80+ is the safe zone.</p>
-  </div>
+  </section>
 
-  <div class="card">
+  <section class="card">
     <h2>How to use the checkboxes</h2>
-    <p class="mut" style="margin:0"><b>L</b> = concept learned · <b>P</b> = 30+ questions solved · <b>R</b> = revised and re-tested. A topic is done only when all three are ticked. Tags: <span class="tag HIGH" style="margin:0">HIGH</span> = most questions, MED = some, LOW = few.</p>
-  </div>
+    <p class="mut" style="margin:0"><b>L</b> = concept learned · <b>P</b> = 30+ questions solved · <b>R</b> = revised and re-tested. A topic is done only when all three are ticked. Tags: <span class="tag HIGH">HIGH</span> most questions, <span class="tag">MED</span> some, <span class="tag">LOW</span> few. Tap a subject to open or close it.</p>
+  </section>
 
   <div id="sections"></div>
 
-  <div class="card">
+  <section class="card">
     <h2>4-phase plan</h2>
     <ul>
       <li><b>Phase 1, Foundation (3 wks):</b> concepts for every topic above, 20–30 questions each. Start with DI and Maths (60 marks).</li>
@@ -107,24 +195,24 @@ button.ghost{background:transparent;color:var(--mut);border:1px solid var(--bd);
       <li><b>Phase 4, Mocks:</b> full 100-question mock every 2–3 days, reviewed the same day.</li>
     </ul>
     <p class="mut">Daily: 60% Maths, Science and DI · 25% reasoning · 15% English passages · 15 min CBAT practice.</p>
-  </div>
+  </section>
 
-  <div class="card">
+  <section class="card">
     <h2>Mock test log</h2>
     <div class="row">
-      <input id="mscore" type="number" inputmode="decimal" placeholder="Score /100">
-      <select id="mtype"><option>Full mock</option><option>Sectional</option></select>
-      <button id="addmock" style="flex:none">Add</button>
+      <input id="mscore" type="number" inputmode="decimal" placeholder="Score /100" style="margin:0">
+      <select id="mtype" style="margin:0"><option>Full mock</option><option>Sectional</option></select>
+      <button id="addmock">Add</button>
     </div>
-    <div id="mocks" class="mut">No full mocks logged yet.</div>
-  </div>
+    <div id="mocks" class="mut" style="margin-top:8px">No full mocks logged yet.</div>
+  </section>
 
   <p class="foot">Syllabus from CEN 08/2026 §15.1. Topics are illustrative, not exhaustive. CBAT batteries listed are from past cycles; confirm in the e-call letter. Progress is saved to your account.</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ---- Your Supabase values (Project Settings > API) ----
+// ---- Your Supabase values ----
 const SUPABASE_URL = 'https://kltjqlwcghdtnhrnvkbg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_qCZKUvycqQgEMiKoJwqC6w_dB1xwqo_';
 
@@ -164,39 +252,100 @@ const SECTIONS = [
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
-let user = null, loaded = false, timer = null;
-let state = { checks: {}, first: {}, mocks: [] };
+const blank = () => ({ checks: {}, first: {}, mocks: [], q: {}, act: {}, goal: 100 });
+let user = null, loaded = false, timer = null, recovery = false, lastUid = null;
+let state = blank();
+
+// PURE-START (date + streak logic)
+const today = () => new Date().toLocaleDateString('en-CA');
+function addDays(str, n) {
+  const d = new Date(str + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toLocaleDateString('en-CA');
+}
+function isActive(d) { return !!state.act[d] || (state.q[d] || 0) > 0; }
+function streaks() {
+  let cur = 0, d = today();
+  if (!isActive(d)) d = addDays(d, -1);
+  while (isActive(d)) { cur++; d = addDays(d, -1); }
+  const all = Object.keys(Object.assign({}, state.act, state.q)).filter(isActive).sort();
+  let best = 0, run = 0, prev = null;
+  for (const x of all) {
+    run = (prev && addDays(prev, 1) === x) ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = x;
+  }
+  return { cur, best: Math.max(best, cur) };
+}
+// PURE-END
+
+// ---------- theme ----------
+try { const t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+$('theme').onclick = () => {
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  const nx = cur === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', nx);
+  try { localStorage.setItem('theme', nx); } catch (e) {}
+};
 
 // ---------- auth ----------
+function show(v) { ['auth', 'recovery', 'app'].forEach(x => { $(x).hidden = x !== v; }); }
+function say(id, text, kind) { const e = $(id); e.textContent = text || ''; e.className = 'msg ' + (kind || ''); }
+$('showpw').onchange = () => { $('pass').type = $('showpw').checked ? 'text' : 'password'; };
+
 async function doAuth(kind) {
-  $('autherr').textContent = '';
+  say('authmsg', '');
   const creds = { email: $('email').value.trim(), password: $('pass').value };
-  if (!creds.email || !creds.password) { $('autherr').textContent = 'Enter email and password.'; return; }
+  if (!creds.email || !creds.password) return say('authmsg', 'Enter email and password.', 'err');
+  if (creds.password.length < 6) return say('authmsg', 'Password must be at least 6 characters.', 'err');
   const res = kind === 'signup' ? await sb.auth.signUp(creds) : await sb.auth.signInWithPassword(creds);
-  if (res.error) { $('autherr').textContent = res.error.message; return; }
-  if (kind === 'signup' && !res.data.session) $('autherr').textContent = 'Check your email to confirm, then log in.';
+  if (res.error) return say('authmsg', res.error.message, 'err');
+  if (kind === 'signup' && !res.data.session) say('authmsg', 'Check your email to confirm, then log in.', 'ok');
 }
 $('login').onclick = () => doAuth('login');
 $('signup').onclick = () => doAuth('signup');
 $('logout').onclick = () => sb.auth.signOut();
 
-sb.auth.onAuthStateChange((_event, session) => {
-  user = session ? session.user : null;
-  $('auth').hidden = !!user;
-  $('app').hidden = !user;
-  loaded = false;
-  if (user) { $('who').textContent = user.email; setTimeout(load, 0); }
-  else state = { checks: {}, first: {}, mocks: [] };
+$('forgot').onclick = async () => {
+  const email = $('email').value.trim();
+  if (!email) return say('authmsg', 'Type your email above first, then tap Forgot password.', 'err');
+  say('authmsg', 'Sending...', '');
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin });
+  say('authmsg', error ? error.message : 'Reset link sent. Check your inbox and spam folder.', error ? 'err' : 'ok');
+};
+
+$('savepw').onclick = async () => {
+  const a = $('np1').value, b = $('np2').value;
+  if (a.length < 6) return say('recmsg', 'Password must be at least 6 characters.', 'err');
+  if (a !== b) return say('recmsg', 'Passwords do not match.', 'err');
+  const { error } = await sb.auth.updateUser({ password: a });
+  if (error) return say('recmsg', error.message, 'err');
+  recovery = false;
+  history.replaceState(null, '', location.pathname);
+  show('app'); $('who').textContent = user.email;
+  lastUid = user.id; loaded = false; setTimeout(load, 0);
+};
+
+sb.auth.onAuthStateChange((event, session) => {
+  const u = session ? session.user : null;
+  if (event === 'PASSWORD_RECOVERY') { recovery = true; user = u; show('recovery'); return; }
+  if (event === 'SIGNED_OUT') recovery = false;
+  user = u;
+  if (recovery) return;
+  if (!u) { lastUid = null; loaded = false; state = blank(); update(); show('auth'); return; }
+  show('app'); $('who').textContent = u.email;
+  if (u.id !== lastUid) { lastUid = u.id; loaded = false; setTimeout(load, 0); }
 });
 
 // ---------- data ----------
 async function load() {
   const { data, error } = await sb.from('progress').select('data').eq('user_id', user.id).maybeSingle();
   if (error) { $('saved').textContent = 'Could not load: ' + error.message; return; }
-  state = Object.assign({ checks: {}, first: {}, mocks: [] }, data ? data.data : {});
+  state = Object.assign(blank(), data ? data.data : {});
   loaded = true;
   $('saved').textContent = 'Synced ✓';
-  render();
+  update();
 }
 function save() {
   if (!loaded) return;
@@ -207,6 +356,7 @@ function save() {
     $('saved').textContent = error ? 'Save failed: ' + error.message : 'Saved ✓';
   }, 500);
 }
+function mark() { state.act[today()] = 1; }
 
 // ---------- UI ----------
 function el(tag, cls, text) {
@@ -215,56 +365,60 @@ function el(tag, cls, text) {
   if (text !== undefined) e.textContent = text;
   return e;
 }
-function render() {
-  // countdown
-  const ms = DEADLINE - new Date();
-  const d = Math.ceil(ms / 864e5);
-  $('days').textContent = ms <= 0 ? 'Closed' : d + (d === 1 ? ' day' : ' days');
+const openSet = new Set([SECTIONS[0][0]]);
+let refs = [], dfRefs = [];
 
-  // do first
-  const df = $('dofirst'); df.innerHTML = '';
+function build() {
+  const df = $('dofirst'); df.innerHTML = ''; dfRefs = [];
   DO_FIRST.forEach((t, i) => {
     const row = el('label', 'item');
-    const c = el('input'); c.type = 'checkbox'; c.checked = !!state.first[i];
+    const c = el('input'); c.type = 'checkbox';
     c.onchange = () => { state.first[i] = c.checked; save(); };
-    row.append(el('span', '', t), c);
-    df.appendChild(row);
+    row.append(el('span', 'tname', t), c);
+    df.appendChild(row); dfRefs.push({ c, i });
   });
 
-  // sections
-  const box = $('sections'); box.innerHTML = '';
-  let all = 0, ticked = 0;
+  const box = $('sections'); box.innerHTML = ''; refs = [];
   SECTIONS.forEach(([name, topics]) => {
-    const card = el('div', 'card');
-    const head = el('div', 'top');
-    const pctEl = el('span', 'mut');
-    head.append(el('h2', '', name), pctEl);
+    const det = el('details', 'card sec'); det.open = openSet.has(name);
+    det.addEventListener('toggle', () => { det.open ? openSet.add(name) : openSet.delete(name); });
+    const sum = el('summary'); const pill = el('span', 'pill', '0%');
+    sum.append(el('span', '', name), pill);
     const bar = el('div', 'bar'); const fill = el('div'); bar.appendChild(fill);
-    card.append(head, bar);
-    let sAll = 0, sTick = 0;
+    det.append(sum, bar);
+    const boxes = [];
     topics.forEach(([topic, tag]) => {
       const row = el('div', 'item');
-      const left = el('span');
-      left.append(topic, el('span', 'tag ' + tag, tag));
-      const boxes = el('div', 'boxes');
+      const left = el('span', 'tname'); left.append(topic, el('span', 'tag ' + tag, tag));
+      const g = el('div', 'boxes');
       ['L', 'P', 'R'].forEach(k => {
         const key = name + '|' + topic + '|' + k;
-        sAll++; if (state.checks[key]) sTick++;
-        const lab = el('label'); const c = el('input'); c.type = 'checkbox'; c.checked = !!state.checks[key];
-        c.onchange = () => { state.checks[key] = c.checked; save(); render(); };
-        lab.append(el('span', '', k), c); boxes.appendChild(lab);
+        const lab = el('label'); const c = el('input'); c.type = 'checkbox';
+        c.onchange = () => { state.checks[key] = c.checked; if (c.checked) mark(); save(); update(); };
+        lab.append(el('span', '', k), c); g.appendChild(lab);
+        boxes.push({ c, key });
       });
-      row.append(left, boxes); card.appendChild(row);
+      row.append(left, g); det.appendChild(row);
     });
-    const p = sAll ? Math.round(sTick * 100 / sAll) : 0;
-    pctEl.textContent = p + '%'; fill.style.width = p + '%';
-    all += sAll; ticked += sTick;
-    box.appendChild(card);
+    box.appendChild(det);
+    refs.push({ pill, fill, boxes });
   });
-  const p = all ? Math.round(ticked * 100 / all) : 0;
-  $('pct').textContent = p + '%'; $('fill').style.width = p + '%';
+}
 
-  // mocks
+function renderWeek() {
+  const w = $('week'); w.innerHTML = '';
+  const goal = state.goal || 100, t = today();
+  for (let i = 6; i >= 0; i--) {
+    const d = addDays(t, -i), n = state.q[d] || 0, on = isActive(d);
+    const col = el('div', 'col'), wt = el('div', 'wt'), bar = el('div', 'wbar' + (on ? ' on' : ''));
+    bar.style.height = Math.max(on ? 10 : 0, Math.min(100, Math.round(n * 100 / goal))) + '%';
+    wt.appendChild(bar);
+    const lab = el('div', 'wl' + (i === 0 ? ' today' : ''), new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short' }).slice(0, 2));
+    col.append(wt, lab); w.appendChild(col);
+  }
+}
+
+function renderMocks() {
   const m = $('mocks'); m.innerHTML = '';
   if (!state.mocks.length) { m.textContent = 'No full mocks logged yet.'; return; }
   const full = state.mocks.filter(x => x.type === 'Full mock').map(x => x.score);
@@ -276,18 +430,66 @@ function render() {
     const r = el('div', 'mock');
     r.appendChild(el('span', '', x.type + ': ' + x.score + '/100  (' + x.date + ')'));
     const b = el('button', 'x', '✕');
-    b.onclick = () => { state.mocks.splice(i, 1); save(); render(); };
+    b.onclick = () => { state.mocks.splice(i, 1); save(); update(); };
     r.appendChild(b); m.appendChild(r);
   });
 }
+
+function update() {
+  let all = 0, tick = 0;
+  refs.forEach(r => {
+    let a = 0, t = 0;
+    r.boxes.forEach(b => { const v = !!state.checks[b.key]; b.c.checked = v; a++; if (v) t++; });
+    const p = a ? Math.round(t * 100 / a) : 0;
+    r.pill.textContent = p + '%'; r.fill.style.width = p + '%';
+    all += a; tick += t;
+  });
+  const p = all ? Math.round(tick * 100 / all) : 0;
+  $('pct').textContent = p + '%'; $('pct2').textContent = p + '%';
+  $('ring').style.setProperty('--p', p);
+  dfRefs.forEach(r => { r.c.checked = !!state.first[r.i]; });
+
+  const ms = DEADLINE - new Date(), d = Math.ceil(ms / 864e5);
+  $('days').textContent = ms <= 0 ? 'Closed' : d + (d === 1 ? ' day' : ' days');
+
+  const s = streaks();
+  $('scur').textContent = s.cur; $('sbest').textContent = s.best;
+  $('smsg').textContent = s.cur === 0 ? 'Tick a topic or log questions today to start your streak.'
+    : isActive(today()) ? 'Streak safe for today ✓' : 'Study today to keep your ' + s.cur + '-day streak alive.';
+  renderWeek();
+
+  const n = state.q[today()] || 0, g = state.goal || 100;
+  $('qnow').textContent = n; $('qgoal').textContent = g;
+  $('gfill').style.width = Math.min(100, Math.round(n * 100 / g)) + '%';
+  $('gmsg').textContent = n >= g ? 'Goal done for today. Great work! 🎉' : (g - n) + ' more to hit today\'s goal.';
+  if (document.activeElement !== $('goalin')) $('goalin').value = g;
+
+  renderMocks();
+}
+
+document.querySelectorAll('[data-add]').forEach(b => {
+  b.onclick = () => {
+    const k = today();
+    state.q[k] = Math.max(0, (state.q[k] || 0) + parseInt(b.dataset.add, 10));
+    if (state.q[k] > 0) mark();
+    save(); update();
+  };
+});
+$('goalin').onchange = () => {
+  const v = parseInt($('goalin').value, 10);
+  if (v > 0) { state.goal = v; save(); update(); }
+};
 $('addmock').onclick = () => {
   const score = parseFloat($('mscore').value);
   if (isNaN(score)) return;
   const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   state.mocks.push({ type: $('mtype').value, score, date });
   $('mscore').value = '';
-  save(); render();
+  mark(); save(); update();
 };
+
+build();
+update();
 </script>
 </body>
 </html>
